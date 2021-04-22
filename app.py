@@ -35,9 +35,7 @@ def precipitation():
     # Create session
     session = Session(engine)
 
-    # YOUR CODE HERE
     precipitation_data = session.query(func.strftime("%Y-%m-%d", Measurement.date), Measurement.prcp).filter(func.strftime("%Y-%m-%d", Measurement.date) >= dt.date(2016, 8, 23)).all()
-    # YOUR CODE HERE
 
     # Close session
     session.close()
@@ -47,13 +45,11 @@ def precipitation():
 def stations():
     # Create session
     session = Session(engine)
-    
-    # YOUR CODE HERE
-    # YOUR CODE HERE
+    active_stations = (session.query(Measurement.station, Station.name, func.count(Measurement.id)).filter(Measurement.station == Station.station).group_by(Measurement.station).order_by(func.count(Measurement.id).desc()).all())
 
     # Close session
     session.close()
-    return "Calculations for STATIONS"
+    return jsonify(active_stations)
 
 @app.route("/api/v1.0/tobs")
 def tobs():
