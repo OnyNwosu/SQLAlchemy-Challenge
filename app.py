@@ -55,13 +55,19 @@ def stations():
 def tobs():
     # Create session
     session = Session(engine)
-    
-    # YOUR CODE HERE
-    # YOUR CODE HERE
+    first_date = session.query(Measurement.date).order_by(Measurement.date).first()
+    last_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first()
+    last_date = session.query(func.max(func.strftime("%Y-%m-%d", Measurement.date))).limit(5).all()
+    last_date[0][0]
+    active_stations = (session.query(Measurement.station, Station.name, func.count(Measurement.id)).filter(Measurement.station == Station.station).group_by(Measurement.station).order_by(func.count(Measurement.id).desc()).all())
+    station_record = (session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs),).filter(Measurement.station == active_stations[0][0]).all())    
+    most_active = 'USC00519281'
+    year_temps = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station == most_active).\
+    filter(func.strftime("%Y-%m-%d", Measurement.date) >= dt.date(2016, 8, 23)).all()
 
     # Close session
     session.close()
-    return "Calculations for TOBS"
+    return jsonify(station_record)
 
 @app.route("/api/v1.0/<start>")
 def start(start='MM-DD-YYYY'):
