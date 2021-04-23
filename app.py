@@ -69,29 +69,31 @@ def tobs():
     session.close()
     return jsonify(station_record)
 
-@app.route("/api/v1.0/<start>")
-def start(start='MM-DD-YYYY'):
+@app.route("/api/v1.0/temp/start")
+def start(start='01-01-2010'):
+    #01/01/2010 = start
     # Create session
     session = Session(engine)
+    start_only = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >= start).all()
     
    
-   
-
     # Close session
     session.close()
-    return "Calculations for START DATE"
+    return jsonify(start_only)
 
-@app.route("/api/v1.0/<start>/<end>")
+
+@app.route("/api/v1.0/temp/start/end")
 def start_and_end(start='MM-DD-YYYY', end='MM-DD-YYYY'):
+    #08/23/2017 = end
     # Create session
     session = Session(engine)
-    
+    start_and_end = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
    
-    
 
     # Close session
     session.close()
-    return "Calculations for START & END DATES"
+    return jsonify(start_and_end)
+    
 
 if __name__ == '__main__':
     app.run(debug=True) # set to false if deploying to live website server
