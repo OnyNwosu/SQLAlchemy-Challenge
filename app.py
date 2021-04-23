@@ -83,17 +83,20 @@ def start(start='01-01-2010'):
 
 
 @app.route("/api/v1.0/temp/start/end")
-def start_and_end(start='MM-DD-YYYY', end='MM-DD-YYYY'):
+def start_and_end(start='01-01-2010', end='08-23-2017'):
+#def start(start='01-01-2010'):
+#?def end(end='08-23-2017'):
     #08/23/2017 = end
     # Create session
     session = Session(engine)
-    start_and_end = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+    start_end = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
    
 
     # Close session
-    session.close()
-    return jsonify(start_and_end)
+    session.close() 
+    return jsonify(start_end)
     
+
 
 if __name__ == '__main__':
     app.run(debug=True) # set to false if deploying to live website server
